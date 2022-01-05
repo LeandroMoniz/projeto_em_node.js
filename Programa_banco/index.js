@@ -27,17 +27,17 @@ function operation() {
         .then((answer)  => {
            const action = answer['action']
 
-           if(action === 'Criar conta'){
-           createAccount()
+          if(action === 'Criar conta'){
+             createAccount()
         } else if(action === 'Depositar'){
-          deposit()
-        } else if(action === 'Consulta saldo'){
-
+            deposit()
+        } else if(action === 'Consulta Saldo'){
+            getAccountBalance()
         } else if(action === 'sacar'){
 
         } else if(action === 'sair'){
-          console.log(chalk.bgBlue.black('Obrigado por usar o Accounts!'))
-          process.exit()  
+            console.log(chalk.bgBlue.black('Obrigado por usar o Accounts!'))
+             process.exit()  
         }
         })
         .catch((err) => console.log(err))
@@ -169,4 +169,34 @@ function getAccount(accountName) {
     })
 
     return JSON.parse(accountJSON)
+}
+
+//Show  account balance
+function getAccountBalance() {
+    inquirer
+    .prompt([
+        {
+            name: 'accountName',
+            message: 'Qual o nome da sua conta',
+        },
+    ])
+    .then((answer) => {
+        const accountName = answer['accountName']
+
+        // verify if account exists
+        
+        if(!checkAccount(accountName)) {
+            return getAccountBalance()
+        }
+
+        const accountData = getAccount(accountName)
+
+        console.log(
+            chalk.bgBlue.black(
+                `Olá, o saldo da sua conta é de R$${accountData.balance}`,
+            ),
+        )
+        operation()
+    })
+    .catch(err => console.log(err))
 }
